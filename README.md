@@ -77,7 +77,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the schema, permission matrix, and AP
 The site and the API deploy together. Vercel builds the browser app into `public/` and runs `app.js` as the server.
 
 1. Push this project to GitHub.
-2. In Vercel, import the repository. Leave the framework preset empty. The build command is already `npm run build`.
+2. In Vercel, import the repository. Set the Framework Preset to Express. The build command is `npm run build` and the output directory is `public`. Do not leave the preset on Vite. Vite looks for a `dist` folder, and this project does not create one.
 3. Use Node.js 22 or 24. The server needs the built-in `node:sqlite` module.
 4. Add environment variables from `.env`:
    - `SUPABASE_URL`
