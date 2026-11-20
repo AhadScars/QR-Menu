@@ -1,0 +1,29 @@
+{
+  "name": "scanora",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Scanora, a multi-tenant QR restaurant menu platform. Super Admin, Restaurant Owner, and Customer roles.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "node server/index.js",
+    "build": "vite build",
+    "start": "npm run build && node server/index.js",
+    "test": "node scripts/integration-test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "multer": "^2.5.0",
+    "pdfkit": "^0.16.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.2",
+    "vite": "^6.0.6"
+  }
+}
