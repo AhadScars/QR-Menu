@@ -4,7 +4,7 @@ Multi-tenant restaurant menu platform. A super admin runs the platform, each res
 
 ## Requirements
 
-- Node.js 22.13 or newer (uses the built-in `node:sqlite` module)
+- Node.js 24 (uses the built-in `node:sqlite` module)
 
 ## Run
 
@@ -74,12 +74,12 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the schema, permission matrix, and AP
 
 ## Deploy on Vercel
 
-The site and the API deploy together. Vercel builds the browser app into `public/` and runs `app.js` as the server.
+The site and the API deploy together. `app.js` is the Express entry Vercel runs. `npm run build` writes the React app into `public/`, and Vercel serves that folder from its CDN. Pages such as `/login` and `/menu/your-slug` are rewritten to `index.html`. `/api` and `/uploads` stay on the server.
 
 1. Push this project to GitHub.
-2. In Vercel, import the repository. Set the Framework Preset to Express. The build command is `npm run build` and the output directory is `public`. Do not leave the preset on Vite. Vite looks for a `dist` folder, and this project does not create one.
-3. Use Node.js 22 or 24. The server needs the built-in `node:sqlite` module.
-4. Add environment variables from `.env`:
+2. In Vercel, import the repository. Set the Framework Preset to **Express**. Set the Build Command to `npm run build`. Leave the Output Directory override **off**. Do not set it to `public` or `dist`. An output directory makes Vercel look for the server inside the built website and the API will not deploy. Do not leave the preset on Vite.
+3. Leave the Node.js version on **24.x**. `package.json` already requests it. The server needs the built-in `node:sqlite` module.
+4. Add these environment variables. Do not set `QR_DB_PATH`, `QR_DATA_DIR`, or `QR_UPLOADS`. Vercel can only write to `/tmp`.
    - `SUPABASE_URL`
    - `SUPABASE_PUBLISHABLE_KEY`
    - `SUPABASE_SECRET_KEY`
@@ -88,5 +88,5 @@ The site and the API deploy together. Vercel builds the browser app into `public
    - `QR_ADMIN_PASSWORD`
 5. Deploy. Open the Vercel URL.
 
-Vercel does not keep a disk. The SQLite database and uploaded photos are stored in temporary space and are cleared when Vercel replaces the running instance. New restaurants and menu edits can disappear. Set `QR_ADMIN_PASSWORD` before the first deploy so the seeded admin is not left on the default password. Keep using `npm start` on your own computer when the menu data needs to stay.
+Vercel does not keep a disk. The SQLite database and uploaded photos live in `/tmp` and are cleared when Vercel replaces the running instance. New restaurants and menu edits can disappear. Set `QR_ADMIN_PASSWORD` before the first deploy so the seeded admin is not left on the default password. Keep using `npm start` on your own computer when the menu data needs to stay.
 

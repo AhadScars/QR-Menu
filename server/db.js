@@ -11,25 +11,27 @@ export const ROOT = path.resolve(__dirname, '..');
 const onVercel = process.env.VERCEL === '1';
 const temporaryRoot = path.join('/tmp', 'scanora');
 
-export const DATA_DIR = process.env.QR_DATA_DIR
-  ? path.resolve(process.env.QR_DATA_DIR)
-  : onVercel
-    ? path.join(temporaryRoot, 'data')
-    : path.join(ROOT, 'data');
-
-export const UPLOAD_ROOT = process.env.QR_UPLOADS
-  ? path.resolve(process.env.QR_UPLOADS)
-  : onVercel
-    ? path.join(temporaryRoot, 'uploads')
-    : path.join(ROOT, 'uploads');
-
-if (onVercel && !process.env.QR_DB_PATH) {
-  console.warn('Vercel has no permanent disk. The menu database and uploads reset when the server instance is replaced.');
+function onTmp(target) {
+  const resolved = path.resolve(target);
+  const tmp = `${path.resolve('/tmp')}${path.sep}`;
+  return resolved === path.resolve('/tmp') || resolved.startsWith(tmp);
 }
 
-const DB_PATH = process.env.QR_DB_PATH
-  ? path.resolve(process.env.QR_DB_PATH)
-  : path.join(DATA_DIR, 'qrmenu.db');
+function storagePath(envValue, fallback) {
+  if (!envValue) return fallback;
+  const resolved = path.resolve(envValue);
+  if (!onVercel || onTmp(resolved)) return resolved;
+  console.warn(`Vercel can only write to /tmp. Ignoring ${envValue}.`);
+  return fallback;
+}
+
+export const DATA_DIR = storagePath(process.env.QR_DATA_DIR, onVercel ? path.join(temporaryRoot, 'data') : path.join(ROOT, 'data'));
+export const UPLOAD_ROOT = storagePath(process.env.QR_UPLOADS, onVercel ? path.join(temporaryRoot, 'uploads') : path.join(ROOT, 'uploads'));
+const DB_PATH = storagePath(process.env.QR_DB_PATH, path.join(DATA_DIR, 'qrmenu.db'));
+
+if (onVercel) {
+  console.warn('Vercel has no permanent disk. The menu database and uploads reset when this server instance is replaced.');
+}
 
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 fs.mkdirSync(UPLOAD_ROOT, { recursive: true });
