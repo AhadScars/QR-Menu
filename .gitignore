@@ -1,6 +1,5 @@
 node_modules/
 dist/
-public/
 data/*.db
 data/*.db-*
 uploads/

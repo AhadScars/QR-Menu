@@ -74,7 +74,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the schema, permission matrix, and AP
 
 ## Deploy on Vercel
 
-The site and the API deploy together. `app.js` is the Express entry Vercel runs. `npm run build` writes the React app into `public/`, and Vercel serves that folder from its CDN. Pages such as `/login` and `/menu/your-slug` are rewritten to `index.html`. `/api` and `/uploads` stay on the server.
+The site and the API deploy together. `app.js` is the Express entry Vercel runs. `npm run build` writes the React app into `public/` and copies it to `server/site/`, which the server ships with the function. `/` and pages such as `/login` and `/menu/your-slug` are served from that build. `/api` and `/uploads` stay on the API.
 
 1. Push this project to GitHub.
 2. In Vercel, import the repository. Set the Framework Preset to **Express**. Set the Build Command to `npm run build`. Leave the Output Directory override **off**. Do not set it to `public` or `dist`. An output directory makes Vercel look for the server inside the built website and the API will not deploy. Do not leave the preset on Vite.

@@ -2,10 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "express",
   "buildCommand": "npm run build",
-  "rewrites": [
-    {
-      "source": "/((?!api(?:/|$)|uploads(?:/|$)).*)",
-      "destination": "/index.html"
+  "functions": {
+    "app.js": {
+      "includeFiles": "server/site/**"
     }
-  ]
+  }
 }

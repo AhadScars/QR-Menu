@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "node server/index.js",
-    "build": "vite build",
+    "build": "vite build && node scripts/stage-web.mjs",
     "start": "npm run build && node server/index.js",
     "test": "node scripts/integration-test.mjs"
   },

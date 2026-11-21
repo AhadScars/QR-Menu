@@ -1,5 +1,4 @@
 import './env.js';
-import fs from 'fs';
 import path from 'path';
 import express from 'express';
 import { fileURLToPath } from 'url';
@@ -12,9 +11,9 @@ import { ownerRouter } from './routes/owner.js';
 import { publicRouter } from './routes/public.js';
 import { probeSupabase, supabaseStatus } from './supabase.js';
 import { syncAllOwners } from './supabaseSync.js';
+import { mountWeb, resolveWebRoot } from './web.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const WEB_ROOT = path.join(ROOT, 'public');
 
 export function createApp() {
   const app = express();
@@ -46,14 +45,13 @@ export function createApp() {
     next(new HttpError(404, 'Not found'));
   });
 
-  if (fs.existsSync(WEB_ROOT)) {
-    app.use(express.static(WEB_ROOT, { index: false, maxAge: '1h' }));
-    app.use((req, res, next) => {
-      if (req.method !== 'GET' && req.method !== 'HEAD') return next();
-      if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
-      res.sendFile(path.join(WEB_ROOT, 'index.html'));
-    });
-  }
+  const webRoot = resolveWebRoot([
+    path.join(__dirname, 'site'),
+    path.join(ROOT, 'public'),
+    path.join(process.cwd(), 'public'),
+  ]);
+  if (!webRoot) console.error('Site build not found. Run npm run build before starting the server.');
+  mountWeb(app, webRoot);
 
   app.use(errorHandler);
   return app;
